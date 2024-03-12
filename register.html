@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Register</title>
+    <link rel="stylesheet" type="text/css" href="/static/login_styles.css">
+</head>
+<body>
+    
+    <form method="post">
+        <h1>Register New User</h1>
+    {% if error %}
+        <p style="color: red;">{{ error }}</p>
+    {% endif %}
+    {% if success %}
+        <p style="color: green;">{{ success }}</p>
+    {% endif %}
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password"><br><br>
+        <input type="submit" value="Register">
+
+        <a href="/">Back</a>
+    </form>
+    <br>
+    
+</body>
+</html>

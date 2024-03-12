@@ -1,0 +1,101 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Violence Detection</title>
+</head>
+<body>
+    <h1>Realtime Advance Video Surveillance System</h1>
+    
+    <video id="video" width="640" height="480" autoplay></video>
+    <canvas id="canvas" width="640" height="480"></canvas>
+    <p id="detection-result"></p>
+
+    <!-- Buttons for adding new user and logout -->
+    <div style="text-align: center; margin-top: 20px;">
+        {% if session.get('logged_in') and session['username'] == 'admin' %}
+        <a href="{{ url_for('register') }}"><button>Add New User</button></a>
+        {% endif %}
+        <a href="{{ url_for('logout') }}"><button>Logout</button></a>
+    </div>
+    
+    <style>
+        body {
+            font-family: sans-serif;
+            color: #333;
+            background-color: #333;
+        }
+        video, canvas {
+            align-items: center;
+            padding-left: 90px;
+        }
+        h1 {
+            text-align: center;
+            color: yellow;
+            font-size: 2rem;
+            padding: 20px;
+        }
+        p { 
+            font-size: 1.5rem;
+            color: red;
+            padding: 20px;
+            align-items: center;
+            padding-left: 90px;
+        }
+    </style>
+    
+    <script>
+        const video = document.getElementById('video');
+        const canvas = document.getElementById('canvas');
+        const detectionResult = document.getElementById('detection-result');
+        const context = canvas.getContext('2d');
+        
+        const constraints = {
+            video: true
+        };
+
+        const threshold = 0.7; // Adjust the threshold as needed
+
+        navigator.mediaDevices.getUserMedia(constraints)
+            .then((stream) => {
+                video.srcObject = stream;
+            })
+            .catch((error) => {
+                console.error('Error accessing the camera:', error);
+            });
+
+        const detectViolence = () => {
+            canvas.width = video.width;
+            canvas.height = video.height;
+            context.drawImage(video, 0, 0, canvas.width, canvas.height);
+
+            const frame = canvas.toDataURL('image/jpeg');
+            
+            fetch('/detect', {
+                method: 'POST',
+                body: JSON.stringify({ frame: frame }),
+                headers: { 'Content-Type': 'application/json' }
+            })
+            .then(response => response.json())
+            .then(data => {
+                const violenceDetection = data.violence_detection;
+                const objectDetection = data.object_detection;
+                detectionResult.innerText = `Violence Detection: ${violenceDetection}\n\nObject Detection: ${objectDetection.class_names.join(', ')} (${objectDetection.detection_results.join(', ')})`;
+                requestAnimationFrame(detectViolence);
+            })
+            .catch(error => {
+                console.error('Error detecting violence:', error);
+            });
+        };
+
+        detectViolence();
+    </script>
+</body>
+<script src="https://www.gstatic.com/dialogflow-console/fast/messenger/bootstrap.js?v=1"></script>
+<df-messenger
+  intent="WELCOME"
+  chat-title="AlertGuardian"
+  agent-id="2b671e79-e58e-4afd-85f9-646be0cc2bc8"
+  language-code="en"
+></df-messenger>
+</html>

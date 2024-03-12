@@ -1,0 +1,34 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Login</title>
+    <link rel="stylesheet" type="text/css" href="/static/login_styles.css">
+
+</head>
+<body>
+    <!-- Your login page content here -->
+</body>
+</html>
+
+</head>
+<body>
+    <form method="post" action="/login">
+    <h1>Login</h1>
+    {% if error %}
+        <p>{{ error }}</p>
+    {% endif %}
+    
+        <label for="username">Username:</label><br>
+        <input type="text" id="username" name="username"><br>
+        <label for="password">Password:</label><br>
+        <input type="password" id="password" name="password"><br><br>
+        <input type="submit" value="Login">
+    </form>
+</body>
+</html>
